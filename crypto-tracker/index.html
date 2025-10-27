@@ -1,0 +1,129 @@
+<!-- Вот полная структура проекта. Сохраните каждый файл в соответствующей папке: -->
+
+<!-- Файловая структура:
+crypto-tracker/
+├── index.html
+├── sw.js
+├── styles/
+│   ├── main.css
+│   ├── navigation.css
+│   ├── dashboard.css
+│   └── modal.css
+└── js/
+    ├── core/
+    │   ├── app.js
+    │   ├── utils.js
+    │   ├── storage.js
+    │   └── navigation.js
+    └── modules/
+        └── portfolio.js
+-->
+
+<!-- 1. index.html -->
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Smart Portfolio</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title"><i class="fas fa-chart-line"></i>Smart Portfolio</h1>
+                <div class="header-actions">
+                    <button class="btn-icon" id="themeToggle"><i class="fas fa-moon"></i></button>
+                    <button class="btn-icon" id="exportBtn"><i class="fas fa-download"></i></button>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" id="globalSearch" placeholder="🔍 Поиск активов..." class="search-input">
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-screen="dashboard"><i class="fas fa-home"></i>Главная</button>
+            <div class="portfolio-dropdown">
+                <button class="nav-btn dropdown-toggle" id="portfolioToggle"><i class="fas fa-briefcase"></i>Портфели ▼</button>
+                <div class="dropdown-menu" id="portfolioMenu">
+                    <div class="dropdown-header">
+                        <span>Мои портфели</span>
+                        <button class="btn-add" id="addPortfolioBtn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="portfolio-list" id="portfolioList"></div>
+                    <div class="dropdown-footer" id="portfolioLimitInfo">Создано: 0/10 портфелей</div>
+                </div>
+            </div>
+            <button class="nav-btn" data-screen="analytics"><i class="fas fa-chart-pie"></i>Аналитика</button>
+        </nav>
+
+        <div id="notifications" class="notifications-container"></div>
+
+        <div id="dashboard" class="screen active">
+            <div class="quick-stats">
+                <div class="stat-card"><h3>Общая стоимость</h3><div class="stat-value" id="totalPortfolioValue">0,00 ₽</div><div class="stat-change positive" id="totalChange">+0.00%</div></div>
+                <div class="stat-card"><h3>Изменение за сегодня</h3><div class="stat-value" id="todayChange">0,00 ₽</div><div class="stat-change positive" id="todayChangePercent">+0.00%</div></div>
+                <div class="stat-card"><h3>Общая прибыль</h3><div class="stat-value" id="totalProfit">0,00 ₽</div><div class="stat-change positive" id="totalProfitPercent">+0.00%</div></div>
+                <div class="stat-card"><h3>Всего активов</h3><div class="stat-value" id="totalAssets">0</div><div class="stat-change">в 0 портфелях</div></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-chart-pie"></i> Распределение активов</h2></div>
+                    <div class="chart-container" id="assetAllocationChart">
+                        <div class="empty-state"><i class="fas fa-chart-pie"></i><p>Нет данных для отображения</p></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-exchange-alt"></i> Курсы валют</h2><button class="btn-secondary" onclick="updateExchangeRates()"><i class="fas fa-sync-alt"></i> Обновить</button></div>
+                    <div class="exchange-rates">
+                        <div class="rate-item"><span class="rate-currency">USD/RUB</span><span class="rate-value" id="usdRate">—</span></div>
+                        <div class="rate-item"><span class="rate-currency">EUR/RUB</span><span class="rate-value" id="eurRate">—</span></div>
+                        <div class="rate-item"><span class="rate-currency">CNY/RUB</span><span class="rate-value" id="cnyRate">—</span></div>
+                        <div class="rate-update">Обновлено: <span id="rateUpdateTime">—</span></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-history"></i> Недавние операции</h2></div>
+                    <div class="recent-transactions" id="recentTransactions">
+                        <div class="empty-state"><i class="fas fa-receipt"></i><p>Нет операций</p></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-briefcase"></i> Мои портфели</h2><button class="btn-primary" onclick="openPortfolioModal()"><i class="fas fa-plus"></i> Создать</button></div>
+                    <div class="portfolios-overview" id="portfoliosOverview">
+                        <div class="empty-state"><i class="fas fa-briefcase"></i><p>Нет портфелей</p><button class="btn-primary" onclick="openPortfolioModal()"><i class="fas fa-plus"></i> Создать портфель</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="portfolio" class="screen">
+            <div class="empty-state"><i class="fas fa-briefcase"></i><h2>Выберите портфель</h2><p>Пожалуйста, выберите портфель из выпадающего списка выше</p><button class="btn-primary" onclick="openPortfolioModal()"><i class="fas fa-plus"></i> Создать первый портфель</button></div>
+        </div>
+
+        <div id="analytics" class="screen">
+            <div class="empty-state"><i class="fas fa-chart-pie"></i><h2>Аналитика портфеля</h2><p>Для просмотра аналитики выберите портфель</p></div>
+        </div>
+    </div>
+
+    <div id="portfolioModal" class="modal"></div>
+    <div id="assetModal" class="modal"></div>
+    <div id="settingsModal" class="modal"></div>
+
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/storage.js"></script>
+    <script src="js/core/navigation.js"></script>
+    <script src="js/modules/portfolio.js"></script>
+    <script src="js/core/app.js"></script>
+</body>
+</html>

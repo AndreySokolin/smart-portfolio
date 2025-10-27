@@ -1,0 +1,101 @@
+/* 3. styles/main.css */
+:root {
+    --bg-primary: #ffffff; --bg-secondary: #f8fafc; --bg-tertiary: #f1f5f9;
+    --text-primary: #1e293b; --text-secondary: #64748b; --text-muted: #94a3b8;
+    --accent-primary: #3b82f6; --accent-secondary: #8b5cf6; --success-color: #10b981;
+    --error-color: #ef4444; --warning-color: #f59e0b; --border-color: #e2e8f0;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] {
+    --bg-primary: #1e293b; --bg-secondary: #0f172a; --bg-tertiary: #334155;
+    --text-primary: #f1f5f9; --text-secondary: #cbd5e1; --text-muted: #64748b;
+    --accent-primary: #60a5fa; --accent-secondary: #a78bfa; --success-color: #34d399;
+    --error-color: #f87171; --warning-color: #fbbf24; --border-color: #374151;
+    --shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-secondary); color: var(--text-primary); line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+.app-header {
+    background: var(--bg-primary); padding: 20px; border-radius: 12px; margin-bottom: 20px;
+    box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid var(--border-color); transition: all 0.3s ease;
+}
+
+.app-title { font-size: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.app-title i { color: var(--accent-primary); }
+
+.header-actions { display: flex; gap: 10px; }
+.btn-icon {
+    background: transparent; border: none; padding: 10px; border-radius: 8px; cursor: pointer;
+    color: var(--text-secondary); transition: all 0.3s ease; display: flex; align-items: center;
+    justify-content: center; width: 40px; height: 40px;
+}
+.btn-icon:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+
+.main-nav {
+    display: flex; gap: 10px; margin-bottom: 20px; background: var(--bg-primary); padding: 15px;
+    border-radius: 12px; box-shadow: var(--shadow); transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.nav-btn {
+    padding: 12px 20px; background: transparent; border: 2px solid var(--border-color);
+    border-radius: 8px; color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;
+}
+.nav-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+.nav-btn.active { background: var(--accent-primary); border-color: var(--accent-primary); color: white; }
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notifications-container {
+    position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 400px;
+}
+
+.notification {
+    background: var(--bg-primary); border-radius: 8px; padding: 16px; margin-bottom: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-left: 4px solid var(--accent-primary);
+    display: flex; align-items: center; gap: 12px; transform: translateX(400px);
+    transition: transform 0.3s ease; border: 1px solid var(--border-color);
+}
+.notification.show { transform: translateX(0); }
+.notification.success { border-left-color: var(--success-color); }
+.notification.error { border-left-color: var(--error-color); }
+.notification.warning { border-left-color: var(--warning-color); }
+
+.notification-icon { font-size: 18px; }
+.notification.success .notification-icon { color: var(--success-color); }
+.notification.error .notification-icon { color: var(--error-color); }
+.notification.warning .notification-icon { color: var(--warning-color); }
+
+.notification-content { flex: 1; }
+.notification-title { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.notification-message { color: var(--text-secondary); font-size: 14px; }
+.notification-close {
+    background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+    padding: 4px; border-radius: 4px; transition: all 0.2s ease;
+}
+.notification-close:hover { background: var(--bg-secondary); color: var(--text-primary); }
+
+@media (max-width: 768px) {
+    .container { padding: 10px; }
+    .app-header { flex-direction: column; gap: 15px; text-align: center; }
+    .main-nav { flex-wrap: wrap; }
+    .nav-btn { flex: 1; min-width: 120px; justify-content: center; }
+}
